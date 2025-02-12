@@ -696,3 +696,489 @@ public class Main {
 - Attributs privés : `solde`, `titulaire`.
 - Méthodes : `deposer()`, `retirer()` (vérifier que le solde reste positif).
 - Créez une instance et effectuez plusieurs opérations dans une méthode principale.
+
+
+### Correction
+
+**Exo1**
+
+*Person.java*
+```java
+public class Person {
+    // Attributs
+    private String nom;
+    private int age;
+
+    // Constructeur par défaut
+    public Person() {
+        this.nom = "";
+        this.age = 0;
+    }
+
+    // Constructeur avec paramètres
+    public Person(String nom, int age) {
+        this.nom = nom;
+        this.age = age;
+    }
+
+    // Méthode pour se présenter
+    public void sePresenter() {
+        System.out.println("Je m'appelle " + this.nom + " et j'ai " + this.age + " ans.");
+    }
+}
+```
+
+*Main.java*
+```java
+class Main {
+// Méthode principale pour tester la classe
+    public static void main(String[] args) {
+        // Instanciation avec le constructeur par défaut
+        Person personne1 = new Person();
+        personne1.sePresenter(); // Affiche : Je m'appelle  et j'ai 0 ans.
+
+        // Instanciation avec le constructeur paramétré
+        Person personne2 = new Person("Alice", 25);
+        personne2.sePresenter(); // Affiche : Je m'appelle Alice et j'ai 25 ans.
+    }
+}
+```
+
+Exo2
+
+*CompteBancaire.java*
+```java
+public class CompteBancaire {
+    // Attributs privés
+    private double solde;
+    private String titulaire;
+
+    // Constructeur
+    public CompteBancaire(String titulaire, double soldeInitial) {
+        this.titulaire = titulaire;
+        this.solde = soldeInitial;
+    }
+
+    // Méthode pour déposer de l'argent
+    public void deposer(double montant) {
+        if (montant > 0) {
+            solde += montant;
+            System.out.println(montant + " € déposés. Nouveau solde : " + solde + " €");
+        } else {
+            System.out.println("Le montant à déposer doit être positif.");
+        }
+    }
+
+    // Méthode pour retirer de l'argent
+    public void retirer(double montant) {
+        if (montant > 0 && montant <= solde) {
+            solde -= montant;
+            System.out.println(montant + " € retirés. Nouveau solde : " + solde + " €");
+        } else if (montant > solde) {
+            System.out.println("Fonds insuffisants. Solde actuel : " + solde + " €");
+        } else {
+            System.out.println("Le montant à retirer doit être positif.");
+        }
+    }
+}
+```
+
+*Main.java*
+```java
+public class Main {
+    public static void main(String[] args) {
+        // Création d'une instance de CompteBancaire
+        CompteBancaire compte = new CompteBancaire("Alice", 1000.0);
+        
+        // Dépôt d'argent
+        compte.deposer(500.0); // 500.0 € déposés. Nouveau solde : 1500.0 €
+
+        // Retrait d'argent
+        compte.retirer(200.0); // 200.0 € retirés. Nouveau solde : 1300.0 €
+
+        // Tentative de retrait d'un montant supérieur au solde
+        compte.retirer(2000.0); // Fonds insuffisants. Solde actuel : 1300.0 €
+
+        // Tentative de retrait d'un montant négatif
+        compte.retirer(-100.0); // Le montant à retirer doit être positif.
+    }
+}
+```
+
+## Les principes fondamentaux de la POO
+
+### Encapsulation
+
+- L'encapsulation consiste à protéger les données d’une classe en les rendant inaccessibles directement depuis l'extérieur.
+- Cela se fait en déclarant les attributs comme **privés** (`private`) et en fournissant des **getters** et **setters** publics.
+
+```java
+public class CompteBancaire {
+    private double solde;
+
+    // Getter
+    public double getSolde() {
+        return solde;
+    }
+	public void setSolde(double solde) {
+		this.solde = solde;
+	}
+
+    // Setter
+    public void deposer(double montant) {
+        if (montant > 0) {
+            solde += montant;
+        }
+    }
+
+    public void retirer(double montant) {
+        if (montant > 0 && montant <= solde) {
+            solde -= montant;
+        } else {
+            System.out.println("Fonds insuffisants !");
+        }
+    }
+}
+```
+
+#### Exercice pratique
+
+- Implémentez une classe `Produit` avec des attributs `nom`, `prix` et `quantite`.
+- Créez des getters et setters pour gérer ces données.
+
+### Héritage
+
+- L’héritage permet à une classe (classe enfant) de **réutiliser** les attributs et méthodes d’une autre classe (classe parent).
+- On utilise le mot-clé `extends` pour établir une relation d’héritage.
+
+```java
+public class Vehicule {
+    protected String marque;
+
+    public void demarrer() {
+        System.out.println("Le véhicule démarre.");
+    }
+}
+
+public class Voiture extends Vehicule {
+    public void klaxonner() {
+        System.out.println("La voiture klaxonne !");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Voiture voiture = new Voiture();
+        voiture.marque = "Toyota";
+        voiture.demarrer();
+        voiture.klaxonner();
+    }
+}
+```
+
+#### Exercice pratique
+- Créez une classe parent `Animal` avec une méthode `faireDuBruit()`.
+- Créez des classes enfants `Chien` et `Chat` qui redéfinissent cette méthode.
+
+#### Correction
+
+*Animal.java*
+```java
+// Classe parent Animal
+public class Animal {
+    // Méthode faireDuBruit() dans la classe parent
+    public void faireDuBruit() {
+        System.out.println("L'animal fait un bruit.");
+    }
+}
+```
+
+*Chien.java*
+```java
+// Classe enfant Chien
+public class Chien extends Animal {
+    // Redéfinition de la méthode faireDuBruit()
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chien aboie : Woof Woof !");
+    }
+}
+```
+
+*Chat.java*
+```java
+// Classe enfant Chat
+public class Chat extends Animal {
+    // Redéfinition de la méthode faireDuBruit()
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chat miaule : Meow Meow !");
+    }
+}
+```
+
+### Polymorphisme
+
+- Le polymorphisme permet d’utiliser une méthode ou un objet de différentes manières, selon le contexte.
+- Deux formes principales :
+    - **Polymorphisme statique (surcharge)** : Plusieurs méthodes avec le même nom mais des signatures différentes.
+    - **Polymorphisme dynamique (redéfinition)** : Une méthode d'une classe parent est redéfinie dans une classe enfant.
+
+**Surcharge (statique)**
+```java
+public class Calculatrice {
+    public int additionner(int a, int b) {
+        return a + b;
+    }
+
+    public double additionner(double a, double b) {
+        return a + b;
+    }
+}
+```
+
+**Surcharge (dynamique)**
+```java
+public class Animal {
+    public void faireDuBruit() {
+        System.out.println("L'animal fait du bruit.");
+    }
+}
+
+public class Chien extends Animal {
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chien aboie.");
+    }
+}
+
+public class Chat extends Animal {
+    @Override
+    public void faireDuBruit() {
+        System.out.println("Le chat miaule.");
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Animal animal = new Chien();
+        animal.faireDuBruit(); // Affiche : "Le chien aboie."
+        
+        Animal animal2 = new Chat();
+        animal2.faireDuBruit(); // Affiche : "Le chat miaule."
+    }
+}
+```
+
+#### Exercice pratique
+Implémentez une méthode `calculerPrix` dans une classe parent `Produit` et redéfinissez là dans des classes enfants `Livre` et `DVD`.
+Un Livre est à 5% de TVA et un DVD à 20%.
+
+#### Correction
+
+*Exercice.java*
+```java
+// Classe parent Produit
+class Produit {
+    protected String nom;
+    protected double prixBase;
+
+    public Produit(String nom, double prixBase) {
+        this.nom = nom;
+        this.prixBase = prixBase;
+    }
+
+    public double calculerPrix() {
+        return prixBase; // Prix de base sans modification
+    }
+
+    public void afficherPrix() {
+        System.out.println(nom + " coûte : " + calculerPrix() + " €");
+    }
+}
+
+// Classe enfant Livre
+class Livre extends Produit {
+    private double taxeLivre = 0.05; // 5% de taxe
+
+    public Livre(String nom, double prixBase) {
+        super(nom, prixBase);
+    }
+
+    @Override
+    public double calculerPrix() {
+        return prixBase * (1 + taxeLivre);
+    }
+}
+
+// Classe enfant DVD
+class DVD extends Produit {
+    private double taxeDVD = 0.20; // 20% de taxe
+
+    public DVD(String nom, double prixBase) {
+        super(nom, prixBase);
+    }
+
+    @Override
+    public double calculerPrix() {
+        return prixBase * (1 + taxeDVD);
+    }
+}
+```
+
+
+### Abstraction
+
+- L’abstraction consiste à cacher les détails d’implémentation et à exposer uniquement les fonctionnalités essentielles.
+- Implémentée avec :
+    - **Classes abstraites** : Utilisent le mot-clé `abstract`.
+    - **Interfaces** : Définissent un contrat sans fournir d'implémentation.
+
+#### Classe abstraite
+```java
+public abstract class Forme {
+    public abstract double calculerAire();
+}
+
+public class Cercle extends Forme {
+    private double rayon;
+
+    public Cercle(double rayon) {
+        this.rayon = rayon;
+    }
+
+    @Override
+    public double calculerAire() {
+        return Math.PI * rayon * rayon;
+    }
+}
+
+```
+
+#### Interface
+```java
+public interface Volant {
+    public void voler();
+}
+
+public class Avion implements Volant {
+    @Override
+    public void voler() {
+        System.out.println("L'avion vole dans les airs.");
+    }
+}
+
+```
+
+#### Exercice pratique
+- Créez une interface `Transport` avec une méthode `deplacer()`.
+- Implémentez cette interface dans des classes `Voiture` et `Avion`.
+
+#### Correction
+
+*Transport.java*
+```java
+public interface Transport { void deplacer(); }
+```
+
+*Voiture.java*
+```java
+public class Voiture implements Transport {
+    @Override
+    public void deplacer() {
+        System.out.println("La voiture roule sur la route.");
+    }
+}
+```
+
+*Avion.java*
+```java
+public class Avion implements Transport {
+    @Override
+    public void deplacer() {
+        System.out.println("L'avion vole dans le ciel.");
+    }
+}
+```
+
+## Les collections, les exceptions et la gestion des fichiers
+
+Les collections sont des structures de données dynamiques qui permettent de stocker, gérer et manipuler des groupes d’objets.
+
+### Interfaces principales des collections
+- **Collection** : Interface de base.
+- **List** : Une liste ordonnée (par exemple, `ArrayList`, `LinkedList`).
+- **Set** : Une collection sans doublons (par exemple, `HashSet`, `TreeSet`).
+- **Map** : Une collection d'associations clé-valeur (par exemple, `HashMap`, `TreeMap`).
+
+*Exemple d'utilisation d’une List*
+```java
+import java.util.ArrayList;
+
+public class Main {
+    public static void main(String[] args) {
+        // Création d'une liste
+        ArrayList<String> fruits = new ArrayList<>();
+        
+        // Ajout d'éléments
+        fruits.add("Pomme");
+        fruits.add("Banane");
+        fruits.add("Orange");
+        
+        // Parcours de la liste
+        for (String fruit : fruits) {
+            System.out.println(fruit);
+        }
+
+        // Accès à un élément
+        System.out.println("Premier fruit : " + fruits.get(0));
+    }
+}
+```
+
+*Exemple d’utilisation d’une Map*
+```java
+import java.util.HashMap;
+
+public class Main {
+    public static void main(String[] args) {
+        // Création d'une map
+        HashMap<String, Integer> stock = new HashMap<>();
+        
+        // Ajout d'éléments
+        stock.put("Pommes", 50);
+        stock.put("Bananes", 20);
+
+        // Parcours de la map
+        for (String key : stock.keySet()) {
+            System.out.println(key + " : " + stock.get(key));
+        }
+    }
+}
+```
+
+#### Résumé des différences principales
+
+|Propriété|**List**|**Set**|**Map**|
+|---|---|---|---|
+|**Ordonnée**|Oui|Non (sauf `LinkedHashSet`)|Non (sauf `TreeMap`, `LinkedHashMap`)|
+|**Doublons**|Autorisés|Interdits|Clés interdites, valeurs autorisées|
+|**Accès par clé**|Non|Non|Oui (par la clé)|
+|**Structure**|Séquence d'éléments|Collection d'éléments uniques|Association clé-valeur|
+### Étude de cas complète
+
+Créez une application pour gérer une liste d'étudiants :
+- Ajouter un étudiant (nom, prenom et classe).
+- Afficher la liste des étudiants.
+- Supprimer un étudiant par son nom.
+
+#### Correction
+
+##### Structure
+
+```css
+/MonProjet
+   ├── Etudiant.java
+   ├── GestionEtudiants.java
+   ├── Main.java
+
