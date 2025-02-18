@@ -1350,3 +1350,167 @@ Supprime les fichiers générés (`target/` etc.) :
 ```bash
 mvn clean
 ```
+
+# JDBC (Java Data Base Connectivity)
+
+### Qu'est-ce que JDBC ?
+
+**JDBC (Java Database Connectivity)** est une API fournie par Java permettant aux applications de se connecter à une base de données et d’exécuter des requêtes SQL.
+
+🔹 **Pourquoi JDBC ?**
+- JDBC est une interface standardisée pour l'accès aux bases de données relationnelles.
+- Il permet aux applications Java d’être indépendantes du type de base de données utilisée.
+- JDBC facilite l’interaction avec les bases de données via une série de classes et d’interfaces Java.
+
+🔹 **Exemple de workflow JDBC :**
+- Charger un **driver JDBC** (logiciel permettant la communication avec la base).
+- Établir une **connexion** avec la base de données.
+- Exécuter des requêtes SQL (lecture, insertion, mise à jour, suppression).
+- Lire les résultats et les afficher ou les manipuler.
+- Fermer la connexion pour libérer les ressources.
+
+### Architecture et fonctionnement de JDBC
+
+L’architecture JDBC repose sur **quatre composants principaux** :
+
+**JDBC API** :
+    - Fournit des classes et interfaces pour interagir avec la base de données.
+    - Située dans le package `java.sql`.
+    - Permet d’exécuter des requêtes SQL et de gérer les transactions.
+**JDBC Driver** :
+    - Un **driver** est un pont entre Java et la base de données.
+    - Chaque base de données (MySQL, PostgreSQL, Oracle, etc.) a son propre driver.
+    - Exemples de drivers JDBC :
+        - MySQL : `com.mysql.cj.jdbc.Driver`
+        - PostgreSQL : `org.postgresql.Driver`
+        - SQLite : `org.sqlite.JDBC`
+**Driver Manager (`java.sql.DriverManager`)** :
+    - Gère les différents drivers installés.
+    - Sert d’intermédiaire entre l’application et la base de données.
+**Base de données** :
+    - La source des données avec lesquelles Java interagit.
+
+**Schéma de fonctionnement :**
+
+```mathematica
+Application Java  →  JDBC API  →  Driver Manager  →  Driver JDBC  →  Base de données
+```
+
+
+### Différences entre JDBC et ORM (ex : Hibernate)
+
+JDBC est une approche **bas niveau** permettant de manipuler directement les bases de données en SQL, tandis que les ORM (Object-Relational Mapping) comme **Hibernate** automatisent ce processus.
+
+|Critère|JDBC|Hibernate (ORM)|
+|---|---|---|
+|Niveau d’abstraction|Bas (requêtes SQL directes)|Élevé (manipulation d’objets Java)|
+|Facilité d’utilisation|Complexe (code répétitif)|Plus simple (annotations, mapping automatique)|
+|Performances|Rapide (accès direct)|Peut être plus lent (couche d’abstraction)|
+|Transactions|Gestion manuelle|Géré automatiquement|
+|Sécurité|Risque d'injection SQL|Protégé par défaut|
+
+- **JDBC est idéal pour des projets simples ou lorsqu’on a besoin d’un contrôle total.**  
+- **Hibernate est recommandé pour des projets complexes nécessitant un mapping entre objets Java et bases de données.**
+
+### Les différents types de drivers JDBC
+
+JDBC utilise des **drivers** pour communiquer avec les bases de données. Il existe **quatre types de drivers JDBC** :
+
+**Type 1 : JDBC-ODBC Bridge Driver** _(obsolète, non recommandé)_
+    - Utilise ODBC comme intermédiaire.
+    - Peu performant et dépendant du système d’exploitation.
+**Type 2 : Native-API Driver**
+    - Utilise des bibliothèques natives de la base de données.
+    - Performant mais dépendant de la plateforme.
+**Type 3 : Middleware Driver**
+    - Utilise un serveur intermédiaire pour convertir les requêtes JDBC.
+    - Adapté aux architectures distribuées.
+**Type 4 : Thin Driver (100% Java)** _(Recommandé)_
+    - Communique directement avec la base de données.
+    - Indépendant du système et performant.
+    - Exemples : `mysql-connector-java`, `postgresql-42.2.5.jar`, `sqlite-jdbc.jar`.
+
+### Mise en pratique
+
+Avant toute chose installer une base de donnée SQL
+- MySQL
+- Sqlite
+- PostgreSQL
+
+#### Installation et utilisation de maven
+
+Voir le cours sur maven
+#### Le code
+
+*pom.xml*
+```xml
+<build>
+    <plugins>
+        <!-- Maven Shade Plugin -->
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-shade-plugin</artifactId>
+            <version>3.5.1</version> <!-- Vérifiez la dernière version sur Maven Central -->
+            <executions>
+                <execution>
+                    <phase>package</phase>
+                    <goals>
+                        <goal>shade</goal>
+                    </goals>
+                    <configuration>
+                        <!-- Optionnel : spécifier la classe principale -->
+                        <transformers>
+                            <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <mainClass>com.monprojet.App</mainClass> <!-- Remplacez par votre classe principale -->
+                            </transformer>
+                        </transformers>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+
+<dependencies>
+    <dependency>
+      <groupId>com.mysql</groupId>
+      <artifactId>mysql-connector-j</artifactId>
+      <version>8.0.33</version>
+    </dependency>
+</dependencies>
+```
+
+*ConnexionJDBC.java*
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class ConnexionJDBC {
+    public static void main(String[] args) {
+        // Informations de connexion
+        String url = "jdbc:mysql://localhost:3306/maBase"; // Remplacer "maBase" par le nom de votre base
+        String utilisateur = "root";
+        String motDePasse = "password";
+        Connection connexion = null;
+
+        try {
+            // Établir la connexion
+            connexion = DriverManager.getConnection(url, utilisateur, motDePasse);
+            System.out.println("Connexion réussie !");
+            
+        } catch (SQLException e) {
+            System.out.println("Erreur de connexion : " + e.getMessage());
+        } finally { // Toujours fermer la connexion pour éviter les fuites de ressources 
+	        if (connexion != null) { 
+		        try { 
+			        connexion.close(); 
+			        System.out.println("Connexion fermée avec succès."); 
+			    } catch (SQLException e) { 
+				    System.err.println("Erreur lors de la fermeture de la connexion : " + e.getMessage()); 
+				} 
+			} 
+		}
+    }
+}
+```
