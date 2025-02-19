@@ -2,13 +2,15 @@ package com.monprojet;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class App 
 {
     public static void main( String[] args )
     {
-        String url = "jdbc:mysql://localhost:3306/maBase"; // Remplacer "maBase" par le nom de votre base
+        String url = "jdbc:mysql://localhost:3306/mabasegr1"; // Remplacer "maBase" par le nom de votre base
         String utilisateur = "root";
         String motDePasse = "root";
         Connection connexion = null;
@@ -19,7 +21,19 @@ public class App
             // Établir la connexion
             connexion = DriverManager.getConnection(url, utilisateur, motDePasse);
             System.out.println("Connexion réussie !");
-            
+
+            Statement stmt = connexion.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT id, nom, email FROM utilisateurs");
+
+            System.out.println("Liste des utilisateurs :");
+
+            // Parcours du ResultSet
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nom = rs.getString("nom");
+                String email = rs.getString("email");
+                System.out.println("ID : " + id + ", Nom : " + nom + ", Email : " + email);
+            }
         } catch (SQLException e) {
             System.out.println("Erreur de connexion : " + e.getMessage());
         } finally { // Toujours fermer la connexion pour éviter les fuites de ressources 

@@ -1557,3 +1557,145 @@ public class SelectExample {
     }
 }
 ```
+
+### Exécution de requêtes de modification (INSERT, UPDATE, DELETE)
+
+#### Exemple de code : INSERT
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class InsertExample {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/maBase";
+        String username = "root";
+        String password = "password";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password);
+             Statement stmt = conn.createStatement()) {
+
+            String sqlInsert = "INSERT INTO Utilisateur (nom, email) VALUES ('Alice', 'alice@example.com')";
+            int rowsAffected = stmt.executeUpdate(sqlInsert);
+            System.out.println("Insertion réussie, nombre de lignes affectées : " + rowsAffected);
+
+        } catch (SQLException e) {
+            System.err.println("Erreur lors de l'exécution de l'INSERT : " + e.getMessage());
+        }
+    }
+}
+```
+
+#### Exemple de code : UPDATE et DELETE
+
+```java
+// Exemple de UPDATE
+String sqlUpdate = "UPDATE Utilisateur SET email = 'nouvel.email@example.com' WHERE nom = 'Alice'";
+int updatedRows = stmt.executeUpdate(sqlUpdate);
+System.out.println("Nombre de lignes mises à jour : " + updatedRows);
+
+// Exemple de DELETE
+String sqlDelete = "DELETE FROM Utilisateur WHERE nom = 'Alice'";
+int deletedRows = stmt.executeUpdate(sqlDelete);
+System.out.println("Nombre de lignes supprimées : " + deletedRows);
+```
+
+### Exercice pratique
+
+**Consigne :**
+
+Créez un programme qui :
+- Se connecte à votre base de données.
+- Exécute une requête SELECT pour afficher toutes les entrées d'une table (par exemple, `Produit` avec les colonnes `id`, `nom`, `prix`).
+- Exécute ensuite une requête INSERT pour ajouter un nouveau produit.
+- Enfin, affiche à nouveau la liste des produits pour vérifier l'insertion.
+
+Assurez-vous de gérer correctement la fermeture des ressources et la gestion des exceptions.
+
+### Utilisation des PreparedStatement
+
+#### Pourquoi ?
+
+#### Sécurité et prévention des injections SQL
+
+- **Problème avec Statement** :  
+    L’utilisation d’un `Statement` avec des chaînes de caractères concaténées peut rendre votre application vulnérable aux attaques par injection SQL, où un utilisateur malveillant peut injecter du code SQL dans les paramètres.
+    
+- **Solution avec PreparedStatement** :  
+    Un `PreparedStatement` permet de définir des requêtes SQL avec des paramètres (`?`) qui seront remplacés de manière sécurisée par des valeurs fournies par l’utilisateur. Cela évite la concaténation directe de chaînes et limite les risques d'injections SQL.
+    
+
+#### Optimisation des performances
+
+- **Requêtes précompilées** :  
+    Les requêtes préparées sont précompilées par le serveur de base de données. Si la même requête est exécutée plusieurs fois avec des paramètres différents, le serveur peut réutiliser le plan d'exécution, améliorant ainsi les performances.
+
+Maintenant, comment mettons çà en œuvre ?
+
+```java
+String sqlSelect = "SELECT id, nom, email FROM Utilisateur WHERE nom = ?";
+PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect);
+pstmtSelect.setString(1, "Alice");
+ResultSet rs = pstmtSelect.executeQuery();
+
+while (rs.next()) {
+    int id = rs.getInt("id");
+    String nom = rs.getString("nom");
+    String email = rs.getString("email");
+    System.out.println("ID : " + id + ", Nom : " + nom + ", Email : " + email);
+}
+```
+
+Dans un cas un peu plus complexe:
+
+```java
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+public class PreparedStatementExample {
+    public static void main(String[] args) {
+        String url = "jdbc:mysql://localhost:3306/maBase";
+        String username = "root";
+        String password = "password";
+
+        String sqlInsert = "INSERT INTO Utilisateur (nom, email) VALUES (?, ?)";
+        String sqlSelect = "SELECT id, nom, email FROM Utilisateur WHERE nom = ?";
+
+        try (Connection conn = DriverManager.getConnection(url, username, password)) {
+            // Insertion d'un nouvel utilisateur
+            try (PreparedStatement pstmtInsert = conn.prepareStatement(sqlInsert)) {
+                pstmtInsert.setString(1, "Alice");
+                pstmtInsert.setString(2, "alice@example.com");
+                int rowsAffected = pstmtInsert.executeUpdate();
+                System.out.println("Insertion réussie, lignes affectées : " + rowsAffected);
+            }
+
+            // Sélection des utilisateurs portant le nom "Alice"
+            try (PreparedStatement pstmtSelect = conn.prepareStatement(sqlSelect)) {
+                pstmtSelect.setString(1, "Alice");
+                try (ResultSet rs = pstmtSelect.executeQuery()) {
+                    System.out.println("Résultats de la requête : ");
+                    while (rs.next()) {
+                        int id = rs.getInt("id");
+                        String nom = rs.getString("nom");
+                        String email = rs.getString("email");
+                        System.out.println("ID : " + id + ", Nom : " + nom + ", Email : " + email);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Erreur SQL : " + e.getMessage());
+        }
+    }
+}
+```
+
+### Exercice
+
+Modifiez votre programme pour qu'il utilise les `PreparedStatement`.
