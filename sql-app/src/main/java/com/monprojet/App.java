@@ -11,7 +11,8 @@ public class App
         Connexion connexion = new Connexion();
         int choix = 0;
         Scanner sc = new Scanner(System.in);
-            
+        GestionUtilisateur gu = new GestionUtilisateur();    
+
         do {
             System.out.println("Que voulez-vous faire ?");
             System.out.println("1 - Ajouter un utilisateur");
@@ -20,7 +21,7 @@ public class App
 
             switch (choix) {
                 case 1:
-                    
+                    gu.add(connexion, sc);
                     break;
             
                 default:
