@@ -1700,6 +1700,8 @@ public class PreparedStatementExample {
 
 Modifiez votre programme pour qu'il utilise les `PreparedStatement`.
 
+# Javafx
+
 ## Présentation
 
 JavaFX est un framework moderne pour créer des interfaces graphiques en Java. Il a remplacé **Swing** et **AWT** et propose des fonctionnalités avancées telles que :  
@@ -1789,6 +1791,14 @@ A présent configurons le projet pour qu'il puisse utiliser javafx. Pour cela mo
                 </execution>
             </executions>
         </plugin>
+        <plugin>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-maven-plugin</artifactId>
+            <version>0.0.8</version>
+            <configuration>
+                <mainClass>com.example.App</mainClass>
+            </configuration>
+        </plugin>
     </plugins>
 </build>
   <dependencies>
@@ -1802,6 +1812,11 @@ A présent configurons le projet pour qu'il puisse utiliser javafx. Pour cela mo
     <dependency>
         <groupId>org.openjfx</groupId>
         <artifactId>javafx-controls</artifactId>
+        <version>20</version>
+    </dependency>
+    <dependency>
+        <groupId>org.openjfx</groupId>
+        <artifactId>javafx-fxml</artifactId>
         <version>20</version>
     </dependency>
   </dependencies>
