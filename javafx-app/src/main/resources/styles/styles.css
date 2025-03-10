@@ -1,0 +1,11 @@
+.root {
+    -fx-background-image: url('/images/lion.jpg'); /* Chemin de l'image */
+    -fx-background-size: cover; /* Ajuste l'image pour couvrir tout l'espace */
+    -fx-background-position: center; /* Centre l'image */
+    -fx-background-repeat: no-repeat; /* Empêche la répétition de l'image */
+    -fx-font-family: 'Arial';
+}
+
+.label {
+    -fx-text-fill: #FF0000; /* Couleur du texte */
+}
