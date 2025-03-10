@@ -2231,6 +2231,7 @@ Rechercher un utilisateur par son mail ou son nom
 Une fonctionnalité de votre choix
 Un utilisateur est défini comme suit:
 
+```
 +-------------------------+
 | Utilisateur |
 +-------------------------+ 
@@ -2243,3 +2244,4 @@ Un utilisateur est défini comme suit:
 | getter() / setter() | 
 | toString() | 
 +-------------------------+
+```
