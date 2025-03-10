@@ -2233,15 +2233,15 @@ Un utilisateur est défini comme suit:
 
 ```
 +-------------------------+
-| Utilisateur |
+|        Utilisateur      |
 +-------------------------+ 
-| - int id | 
-| - String name | 
-| - String email | 
-| - Datetime createdAt | 
-| - Datetime updatedAt | 
+| - int id                | 
+| - String name           | 
+| - String email          | 
+| - Datetime createdAt    | 
+| - Datetime updatedAt    | 
 +-------------------------+ 
-| getter() / setter() | 
-| toString() | 
+| getter() / setter()     | 
+| toString()              | 
 +-------------------------+
 ```
